@@ -1,4 +1,4 @@
-module mult(a, b, c, cout, acc); 
+module multiply(a, b, c, cout, acc); 
 	input[7:0] a; 
 	input[7:0] b; 
 	input[7:0] acc; 
