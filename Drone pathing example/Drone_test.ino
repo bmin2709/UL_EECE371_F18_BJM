@@ -1,12 +1,17 @@
-#include <stdlib.h>
-
+//struct for drone position
 typedef struct drone{
   int vert;
   int hori;
 }drone_t;
 
 drone_t drone_location;
+int rows = 10;
+int col = 7;
 
+//1d array for LEDs
+int flatarray[70];
+
+//2d Array for mapping
 int room[10][7] = {
 {1, 1, 1, 1, 1, 1, 1},
 {1, 2, 0, 0, 0, 0, 1},
@@ -20,6 +25,7 @@ int room[10][7] = {
 {1, 1, 1, 1, 1, 1, 1}
 };
 
+
 int sonicControl(drone_t drone)
 {
   //legend for int out
@@ -27,7 +33,6 @@ int sonicControl(drone_t drone)
   //1=left
   //-1=right
   //4=back
-  int m1,m2,m3;
   bool front=true;
   bool left=true;
   bool right=true;
@@ -89,5 +94,11 @@ void loop()
     room[drone_location.vert][drone_location.hori] = 0;
     drone_location.vert += 1;
     room[drone_location.vert][drone_location.hori] = 8; 
-  } 
+  }
+
+  for (int i=0; i<rows; i++){
+    for (int j = 0; j<col; j++){
+      flatarray[(i*col)+j] = room[i][j];
+    }
+  }
 }
