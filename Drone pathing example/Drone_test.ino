@@ -1,3 +1,10 @@
+#include <FastLED.h>
+#define DATA_PIN 2
+#define Size 70
+#define NUM_LEDS Size
+
+CRGB leds[NUM_LEDS];
+
 //struct for drone position
 typedef struct drone{
   int vert;
@@ -15,8 +22,8 @@ int flatarray[70];
 int room[10][7] = {
 {1, 1, 1, 1, 1, 1, 1},
 {1, 2, 0, 0, 0, 0, 1},
-{1, 0, 0, 0, 0, 0, 1},
 {1, 0, 0, 1, 0, 0, 1},
+{1, 0, 0, 0, 0, 0, 1},
 {1, 0, 1, 0, 1, 0, 1},
 {1, 0, 0, 0, 1, 0, 1},
 {1, 0, 0, 0, 0, 1, 1},
@@ -36,11 +43,11 @@ int sonicControl(drone_t drone)
   bool front=true;
   bool left=true;
   bool right=true;
-    int path[10][7] = {
+  int path[10][7] = {
 {1, 1, 1, 1, 1, 1, 1},
 {1, 2, 0, 0, 0, 0, 1},
-{1, 0, 0, 0, 0, 0, 1},
 {1, 0, 0, 1, 0, 0, 1},
+{1, 0, 0, 0, 0, 0, 1},
 {1, 0, 1, 0, 1, 0, 1},
 {1, 0, 0, 0, 1, 0, 1},
 {1, 0, 0, 0, 0, 1, 1},
@@ -69,8 +76,9 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  drone_location.hori = 4;
-  drone_location.vert = 7;
+  drone_location.hori = 5;
+  drone_location.vert = 8;
+  FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
 }
 
 void loop() 
@@ -101,4 +109,37 @@ void loop()
       flatarray[(i*col)+j] = room[i][j];
     }
   }
+  arrayPrint(flatarray);
+  delay(1000);
+}
+
+void arrayPrint(int path[]) {
+  int data;
+  //0 == No Obstruction |Blank
+  //1 == Obstruction    |Red
+  //2 == Goal           |Green
+  //8 == Drone          |White
+
+  for (int i = 0; i < Size; i++) {
+    data = path[i];
+    Serial.println(data); 
+
+    if (data == 1) {  //Make the LED red
+      leds[i].setRGB( 15, 0, 0);
+      //Serial.println("Red");
+    }
+    
+    if (data == 2) {  //Make the LED Green
+      leds[i].setRGB( 0, 15, 0);
+      //Serial.println("Green");
+    }
+    
+    if (data == 8) {  //Make the LED White
+      leds[i].setRGB( 10, 10, 10);
+      //Serial.println("White");
+    }
+    
+  }
+  FastLED.show();
+  FastLED.clear();//Clears the LED to be updated again
 }
